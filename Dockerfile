@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM amazoncorretto:17
 WORKDIR /app
 COPY . .
 RUN mkdir -p bin && find src -name "*.java" > sources.txt && javac -cp "lib/*" @sources.txt -d bin
