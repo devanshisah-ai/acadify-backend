@@ -1,8 +1,8 @@
-FROM eclipse-temurin:17-jdk
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY . . 
+COPY . .
 RUN mkdir -p bin && \
 find src -name "*.java" > sources.txt && \
-javac -cp "lib/*" @sources.txt -d bin 
+javac -cp "lib/*" @sources.txt -d bin
 EXPOSE 8080
 CMD ["java", "-cp", "bin:lib/*", "com.acadify.MainApplication"]
