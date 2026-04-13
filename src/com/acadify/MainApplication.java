@@ -7,10 +7,11 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
 public class MainApplication {
-    private static final int    PORT           = 8080;
-    private static final String ALLOWED_ORIGIN = "http://localhost:3000";
+    private static final int PORT = 8080;
+    private static final String ALLOWED_ORIGIN = System.getenv("ALLOWED_ORIGIN") != null
+            ? System.getenv("ALLOWED_ORIGIN")
+            : "http://localhost:3000";
 
-    // ── Single shared instance of AuthController ──────────────────────────────
     private static final AuthController authController = new AuthController();
 
     public static void main(String[] args) {
@@ -32,7 +33,6 @@ public class MainApplication {
         }
     }
 
-    // ── CORS ──────────────────────────────────────────────────────────────────
     private static void addCorsHeaders(HttpExchange exchange) {
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin",      ALLOWED_ORIGIN);
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods",     "GET, POST, PUT, DELETE, OPTIONS");
@@ -49,12 +49,10 @@ public class MainApplication {
         return false;
     }
 
-    // ── Routes ────────────────────────────────────────────────────────────────
-
     private static void routeAuth(HttpExchange exchange) {
         try {
             if (handlePreflight(exchange)) return;
-            authController.handle(exchange); // ✅ instance call — no static error
+            authController.handle(exchange);
         } catch (Exception e) {
             System.err.println("[MainApplication] Auth error: " + e.getMessage());
             try { ResponseUtil.sendError(exchange, 500, "Internal server error"); }
@@ -121,7 +119,6 @@ public class MainApplication {
         }
     }
 
-    // ── Session validation ────────────────────────────────────────────────────
     private static int[] validateSession(HttpExchange exchange, String requiredRole) throws IOException {
         String[] session = SessionUtil.extractAndValidate(exchange);
 
