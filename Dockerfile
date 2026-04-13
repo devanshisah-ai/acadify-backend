@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
-COPY . .
+COPY . . 
 RUN mkdir -p bin && \
 find src -name "*.java" > sources.txt && \
 javac -cp "lib/*" @sources.txt -d bin 
